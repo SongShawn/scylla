@@ -1,7 +1,7 @@
 from typing import Union
 
 import requests
-from requests_html import HTMLSession, HTMLResponse, HTML
+from requests_html import HTMLSession, HTMLResponse, HTML, MaxRetries
 
 from scylla.loggings import logger
 
@@ -44,7 +44,14 @@ class Worker:
         if response.ok:
             if render_js:
                 logger.debug('starting render js...')
-                response.html.render(wait=1.5, timeout=10.0)
+                try:
+                    response.html.render(wait=1.5, timeout=10.0)
+                except (ConnectionError, MaxRetries) as e:
+                    logger.error('[Worker] catch exception render failed. e = {}'.format(e))
+                    return None
+                except (KeyboardInterrupt, SystemExit, InterruptedError):
+                    self.stop()
+                    return None
                 logger.debug('end render js...')
             return response.html
         else:
