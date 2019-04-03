@@ -33,7 +33,7 @@ def _get_valid_proxies_query():
         .where(ProxyIP.is_valid == True)
 
 
-@app.route('/api/v1/proxies')
+@app.route('/shawn/api/v1/proxies')
 async def api_v1_proxies(request: Request):
     args = request.raw_args
 
@@ -108,7 +108,7 @@ async def api_v1_proxies(request: Request):
     })
 
 
-@app.route('/api/v1/stats')
+@app.route('/shawn/api/v1/stats')
 async def api_v1_stats(request: Request):
     median_query: ProxyIP = ProxyIP.raw("""SELECT latency
                                 FROM proxy_ips
@@ -137,5 +137,5 @@ async def api_v1_stats(request: Request):
     })
 
 
-def start_web_server(host='0.0.0.0', port=8899):
+def start_web_server(host='0.0.0.0', port=45678):
     app.run(host=host, port=port)
